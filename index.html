@@ -1156,14 +1156,6 @@ body {
       <!-- AI -->
       <div class="ai-panel">
         <div class="ai-panel-title">✨ Preencher com IA</div>
-        <div class="ai-key-row">
-          <span class="ai-key-label">🔑 Chave</span>
-          <input type="password" class="ai-key-input" id="ai-api-key"
-            placeholder="sk-ant-api03-…"
-            oninput="localStorage.setItem('sc_apikey',this.value)"
-            autocomplete="off">
-        </div>
-        <div class="ai-key-hint">Obtenha em console.anthropic.com — salva automaticamente no navegador.</div>
         <div class="ai-actions">
           <label class="ai-file-label" for="ai-file-input">📎 Selecionar arquivos</label>
           <input type="file" id="ai-file-input" accept="image/*,.pdf" multiple onchange="onAiFileChange(event)">
@@ -2199,10 +2191,14 @@ Regras:
         :{type:'document',source:{type:'base64',media_type:'application/pdf',data:f.data}}),
       {type:'text',text:prompt}
     ];
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:8192,temperature:0.1,messages:[{role:'user',content:blocks}]})
+    const token = localStorage.getItem('sc_token');
+    const resp = await fetch(BACKEND+'/ia/analisar', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      },
+      body: JSON.stringify({messages:[{role:'user',content:blocks}]})
     });
     if(!resp.ok){
       const e=await resp.json().catch(()=>null);
