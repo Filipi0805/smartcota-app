@@ -2183,15 +2183,14 @@ Regras:
 - cadencia: DIÁRIO→diario, SEMANAL→semanal, QUINZENAL→quinzenal, MENSAL→mensal`;
 
   try{
-    const apiKey=(($('ai-api-key')?.value)||localStorage.getItem('sc_apikey')||'').trim();
-    if(!apiKey){setAiStatus('error','Cole sua chave API acima.');btn.disabled=false;return;}
+    const token = localStorage.getItem('sc_token') || '';
+    if(!token){setAiStatus('error','Faça login para usar a IA.');btn.disabled=false;return;}
     const blocks=[
       ...aiFiles.map(f=>f.type.startsWith('image/')
         ?{type:'image',source:{type:'base64',media_type:f.type,data:f.data}}
         :{type:'document',source:{type:'base64',media_type:'application/pdf',data:f.data}}),
       {type:'text',text:prompt}
     ];
-    const token = localStorage.getItem('sc_token');
     const resp = await fetch(BACKEND+'/ia/analisar', {
       method: 'POST',
       headers: {
