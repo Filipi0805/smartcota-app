@@ -1096,7 +1096,7 @@ body {
           style="width:100%;padding:12px;background:linear-gradient(135deg,var(--brand),var(--brand-mid));color:#fff;border:none;border-radius:var(--radius-sm);font-size:15px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;">
           Criar conta grátis
         </button>
-        <div style="font-size:12px;color:var(--text-3);text-align:center;margin-top:12px;">7 dias grátis, sem cartão de crédito</div>
+        
       </div>
 
       <!-- Mensagem de erro/sucesso -->
@@ -1521,10 +1521,9 @@ const abatimentoCota = (c, ct) => {
   return Math.round((valorParcelaN(c, ct.num) * nCotas + num(c.taxaAdmin)) * 100) / 100;
 };
 const valorLiquidoCota = (c, ct) => {
-  const bruto = Math.round(num(ct.valorRecebimento) * num(c.parcelas) * 100) / 100;
-  return Math.round((bruto - abatimentoCota(c, ct)) * 100) / 100;
+  return Math.round(num(ct.valorRecebimento) * num(c.parcelas) * 100) / 100;
 };
-const calcPago      = c => Math.round((num(c.valorInicial)+num(c.valorFinal))/2 * num(c.parcelas) * getCotas(c).length * 100)/100;
+const calcPago      = c => Math.round((((num(c.valorInicial)+num(c.valorFinal))/2*num(c.parcelas)*getCotas(c).length)+(num(c.taxaAdmin)*getCotas(c).length))*100)/100;
 const calcRecebido  = c => Math.round(getCotas(c).reduce((s,ct)=>s+valorLiquidoCota(c,ct),0)*100)/100;
 const calcLucro     = c => calcRecebido(c) - calcPago(c);
 const calcJaPago    = c => Math.round(getList(c).filter(p=>p.pago).reduce((s,p)=>s+valorParcelaN(c,p.num)*getCotas(c).length,0)*100)/100;
