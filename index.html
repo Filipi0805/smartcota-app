@@ -1404,6 +1404,7 @@ async function fazerLogin() {
     localStorage.setItem('sc_token',d.token);
     localStorage.setItem('sc_usuario',JSON.stringify(d.usuario));
     await carregarDadosServidor();
+    await verificarAssinatura();
     entrarNoApp(d.usuario);
   } catch(e){showAuthMsg('Erro de conexão. Tente novamente.',false);}
 }
@@ -1436,6 +1437,18 @@ async function assinar() {
   } catch(e) {
     alert('Erro de conexão.');
   }
+}
+async function verificarAssinatura() {
+  const token = localStorage.getItem('sc_token'); if(!token) return;
+  try {
+    const r = await fetch(BACKEND+'/auth/me', {headers:{'Authorization':'Bearer '+token}});
+    if(!r.ok) return;
+    const d = await r.json();
+    if(d.assinatura !== 'ativo') {
+      alert('Sua assinatura não está ativa. Você será redirecionado para o pagamento.');
+      await assinar();
+    }
+  } catch(e) {}
 }
 async function carregarDadosServidor() {
   const token=localStorage.getItem('sc_token'); if(!token) return;
