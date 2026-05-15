@@ -1420,8 +1420,22 @@ async function fazerCadastro() {
     if(!r.ok) return showAuthMsg(d.erro||'Erro ao criar conta.',false);
     localStorage.setItem('sc_token',d.token);
     localStorage.setItem('sc_usuario',JSON.stringify(d.usuario));
-    entrarNoApp(d.usuario);
+    await assinar();
   } catch(e){showAuthMsg('Erro de conexão. Tente novamente.',false);}
+}
+async function assinar() {
+  try {
+    const token = localStorage.getItem('sc_token');
+    const r = await fetch(BACKEND + '/assinatura/criar', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    const d = await r.json();
+    if(d.url) window.open(d.url, '_blank');
+    else alert('Erro ao criar assinatura.');
+  } catch(e) {
+    alert('Erro de conexão.');
+  }
 }
 async function carregarDadosServidor() {
   const token=localStorage.getItem('sc_token'); if(!token) return;
